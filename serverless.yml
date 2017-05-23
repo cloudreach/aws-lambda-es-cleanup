@@ -1,0 +1,45 @@
+# serverless.yml
+service: es-cleanup-lambda
+
+provider:
+  name: aws
+  stage: prod
+  region: eu-west-1
+  profile: ${env:AWS_DEFAULT_PROFILE}
+  environment:
+    es_endpoint: search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
+    index: all
+    delete_after: "7"
+    index_format: "%Y.%m.%d"
+  stackTags: # Optional CF stack tags
+    Owner: aws@cloudreach.com
+    Purpose: es-cleanup
+    Environment: PROD
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "es:*"
+      Resource: "arn:aws:es:eu-west-1:123456789012:domain/es-demo/*"
+      # you must psecify the full ARN 
+
+
+
+functions:
+  es-cleanup-lambda:
+    handler: es-cleanup.lambda_handler 
+    name: es-cleanup-lambda 
+    description: ES old index removal 
+    runtime: python2.7 
+    memorySize: "128"
+    timeout: 180 
+    package:
+      exclude:
+        - ./**
+      include:
+        - es-cleanup.py
+        - LICENSE.md
+        - README.md
+        - CONTRIBUTING.md
+    events:
+      # Invoke Lambda function every night at 01.00 AM
+      - schedule: cron(0 1 * * ? *)    
