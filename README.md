@@ -37,7 +37,7 @@ $ zip es-cleanup-lambda.zip es-cleanup.py
 
 
 
-### Lambda config and deployment
+### Lambda deployment
 Using awscli you can create your AWS function and set the proper IAM role with the right Account ID
 
 ```bash
@@ -76,6 +76,17 @@ $ aws events put-targets \
 	--targets file://json_file/cloudwatch-target.json
 ```
 
+### Lambda configuration and OS parameters
+
+Using AWS environment variable you can easily modify the behaviour of the Lambda function
+
+| Variable Name | Example Value | Description | Default Value | Required | 
+| --- | --- | --- | --- |  --- |
+| es_endpoint | search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com  | AWS ES fqdn | `None` | True | 
+| index |  `logstash,cwl` | Index/indices to process comma separated, with `all` every index will be processed except `.kibana` | `all` | False |
+| index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False | 
+| delete_after | `7` | Numbers of days to preserve | `15` |  False | 
+| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to where to publish the alert | | False |
 
 ## Serverless Framework
 
