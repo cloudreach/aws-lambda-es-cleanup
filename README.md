@@ -86,7 +86,7 @@ Using AWS environment variable you can easily modify the behaviour of the Lambda
 | index |  `logstash,cwl` | Index/indices to process comma separated, with `all` every index will be processed except `.kibana` | `all` | False |
 | index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False | 
 | delete_after | `7` | Numbers of days to preserve | `15` |  False | 
-| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to where to publish the alert | | False |
+| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to pusblish any alert | | False |
 
 ## Serverless Framework
 
