@@ -163,7 +163,7 @@ def lambda_handler(event, context):
             # ignore .kibana index
             continue
 
-        idx = index["index"].split("-")
+        idx = index["index"].split("-", 1)
 
         if idx[0] in es.cfg["index"] or "all" in es.cfg["index"]:
 
