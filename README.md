@@ -120,6 +120,10 @@ functions:
   es-cleanup-lambda: es-cleanup-lambda-prod-es-cleanup-lambda
 ```
 
+### Terraform deployment 
+
+This lambda function can be also build using terraform followings this [README](terraform/REAME.md).
+
 ## How to Contribute
 
 We encourage contribution to our projects, please see our [CONTRIBUTING](CONTRIBUTING.md) guide for details.
