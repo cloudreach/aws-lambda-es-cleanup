@@ -122,7 +122,7 @@ functions:
 
 ### Terraform deployment 
 
-This lambda function can be also build using terraform followings this [README](terraform/REAME.md).
+This lambda function can be also build using terraform followings this [README](terraform/README.md).
 
 ## How to Contribute
 
