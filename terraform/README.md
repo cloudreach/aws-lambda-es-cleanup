@@ -26,6 +26,7 @@ you indices look like `logstash-2017.10.30`.
 * `prefix` - A prefix for the resource names, this helps create multiple
 instances of this stack for different environments and regions.
 * `schedule` - Schedule expression for running the cleanup function.
+* `python_version` - Python version to be used. Defaults to 2.7
 Default is once a day at 03:00 GMT.
 See: http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
 
@@ -41,5 +42,6 @@ module "es_cleanup" {
   index        = "logstash"
   delete_after = 60
   index_format = "%Y.%m.%d"
+  python_version = "3.6"
 }
 ```
