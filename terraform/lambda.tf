@@ -8,7 +8,7 @@ resource "aws_lambda_function" "es_cleanup" {
     filename         = "${path.module}/es-cleanup.zip"
     function_name    = "${var.prefix}es-cleanup"
     timeout          = 300
-    runtime          = "python2.7"
+    runtime          = "python${var.python_version}"
     role             = "${aws_iam_role.role.arn}"
     handler          = "es-cleanup.lambda_handler"
     source_code_hash = "${data.archive_file.es_cleanup_lambda.output_base64sha256}"
