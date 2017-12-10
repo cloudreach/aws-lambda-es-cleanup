@@ -8,7 +8,11 @@ from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
 from botocore.session import get_session
 from botocore.vendored.requests import Session
-import urllib
+import sys
+if sys.version_info[0] == 3:
+    from urllib.request import quote
+else:
+    from urllib import quote
 import datetime
 import json
 import time
@@ -85,7 +89,7 @@ class ES_Cleanup(object):
 
             req = AWSRequest(
                 method=method,
-                url="https://%s%s?pretty&format=json" % (self.cfg["es_endpoint"], urllib.quote(path)),
+                url="https://%s%s?pretty&format=json" % (self.cfg["es_endpoint"], quote(path)),
                 data=payload,
                 headers={'Host': self.cfg["es_endpoint"]})
             credential_resolver = create_credential_resolver(get_session())
@@ -118,7 +122,7 @@ class ES_Cleanup(object):
             None
         """
         _msg = "[%s][%s] %s" % (self.name, self.cur_account, msg)
-        print _msg
+        print(_msg)
         if self.cfg["sns_alert"] != "":
             sns_region = self.cfg["sns_alert"].split(":")[4]
             sns = boto3.client("sns", region_name=sns_region)
@@ -163,12 +167,13 @@ def lambda_handler(event, context):
             # ignore .kibana index
             continue
 
-        idx = index["index"].split("-")
+        idx_name = '-'.join(word for word in index["index"].split("-")[:-1])
+        idx_date = index["index"].split("-")[-1]
 
-        if idx[0] in es.cfg["index"] or "all" in es.cfg["index"]:
+        if idx_name in es.cfg["index"] or "all" in es.cfg["index"]:
 
-            if idx[-1] <= earliest_to_keep.strftime(es.cfg["index_format"]):
-                print "Deleting index: %s" % index["index"]
+            if idx_date <= earliest_to_keep.strftime(es.cfg["index_format"]):
+                print("Deleting index: %s" % index["index"])
                 es.delete_index(index["index"])
 
 
