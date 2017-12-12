@@ -11,3 +11,5 @@ variable "index" {}
 variable "delete_after" {}
 
 variable "index_format" {}
+
+variable "python_version" { default = "2.7" }
