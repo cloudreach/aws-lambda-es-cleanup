@@ -20,18 +20,18 @@ provider:
       Action:
         - "es:*"
       Resource: "arn:aws:es:eu-west-1:123456789012:domain/es-demo/*"
-      # you must psecify the full ARN 
+      # you must specify the full ARN  of the AWS ES Domain
 
 
 
 functions:
   es-cleanup-lambda:
-    handler: es-cleanup.lambda_handler 
-    name: es-cleanup-lambda 
-    description: ES old index removal 
-    runtime: python2.7 
+    handler: es-cleanup.lambda_handler
+    name: es-cleanup-lambda
+    description: ES old index removal
+    runtime: python2.7
     memorySize: "128"
-    timeout: 180 
+    timeout: 180
     package:
       exclude:
         - ./**
@@ -42,4 +42,4 @@ functions:
         - CONTRIBUTING.md
     events:
       # Invoke Lambda function every night at 01.00 AM
-      - schedule: cron(0 1 * * ? *)    
+      - schedule: cron(0 1 * * ? *)
