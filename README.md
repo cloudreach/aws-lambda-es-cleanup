@@ -55,6 +55,26 @@ $ aws lambda create-function \
 	--timeout 180
 ```
 
+If you want to send variables and not to use environment
+```bash
+$ export AWS_DEFAULT_REGION=eu-west-1
+
+$ aws lambda create-function \
+	--function-name es-cleanup-lambda \
+	--zip-file fileb://es-cleanup-lambda.zip \
+	--description "Elastichsearch Index Cleanup" \
+	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
+	--handler es-cleanup.lambda_handler \
+	--runtime python2.7 \
+	--timeout 180
+
+$ # test
+$ aws lambda invoke
+ --function-name es-cleanup-lambda \
+ outfile --payload \
+ '{"es_endpoint":"search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com"}'
+```
+
 Create your AWS Cloudwatch rule:
 
 ```bash

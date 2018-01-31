@@ -48,13 +48,13 @@ class ES_Cleanup(object):
         self.context = context
 
         self.cfg = {}
-        self.cfg["es_endpoint"] = os.environ.get("es_endpoint", None)
-        self.cfg["index"] = os.environ.get("index", "all").split(",")
+        self.cfg["es_endpoint"] = event.get("es_endpoint", os.environ.get("es_endpoint", None))
+        self.cfg["index"] = event.get("index", os.environ.get("index", "all")).split(",")
 
-        self.cfg["delete_after"] = int(os.environ.get("delete_after", 15))
-        self.cfg["es_max_retry"] = int(os.environ.get("es_max_retry", 3))
-        self.cfg["index_format"] = os.environ.get("index_format", "%Y.%m.%d")
-        self.cfg["sns_alert"] = os.environ.get("sns_alert", "")
+        self.cfg["delete_after"] = int(event.get("delete_after", int(os.environ.get("delete_after", 15))))
+        self.cfg["es_max_retry"] = int(event.get("es_max_retry", int(os.environ.get("es_max_retry", 3))))
+        self.cfg["index_format"] = event.get("index_format", os.environ.get("index_format", "%Y.%m.%d"))
+        self.cfg["sns_alert"] = event.get("sns_alert", os.environ.get("sns_alert", ""))
 
         if not self.cfg["es_endpoint"]:
             raise Exception("[es_endpoint] OS variable is not set")
