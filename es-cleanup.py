@@ -48,16 +48,30 @@ class ES_Cleanup(object):
         self.context = context
 
         self.cfg = {}
-        self.cfg["es_endpoint"] = event.get("es_endpoint", os.environ.get("es_endpoint", None))
-        self.cfg["index"] = event.get("index", os.environ.get("index", "all")).split(",")
+        self.cfg["es_endpoint"] =  self.get_parameter("es_endpoint")
+        self.cfg["index"] = self.get_parameter("index", "all").split(",")
 
-        self.cfg["delete_after"] = int(event.get("delete_after", int(os.environ.get("delete_after", 15))))
-        self.cfg["es_max_retry"] = int(event.get("es_max_retry", int(os.environ.get("es_max_retry", 3))))
-        self.cfg["index_format"] = event.get("index_format", os.environ.get("index_format", "%Y.%m.%d"))
-        self.cfg["sns_alert"] = event.get("sns_alert", os.environ.get("sns_alert", ""))
+        self.cfg["delete_after"] = int(self.get_parameter("delete_after", 15))
+        self.cfg["es_max_retry"] = int(self.get_parameter("es_max_retry", 3))
+        self.cfg["index_format"] = self.get_parameter("index_format", "%Y.%m.%d")
+        self.cfg["sns_alert"] = self.get_parameter("sns_alert", "")
 
         if not self.cfg["es_endpoint"]:
             raise Exception("[es_endpoint] OS variable is not set")
+            
+            
+    def get_parameter(self, key_param, default_param = None):
+        """helper function to retrieve specific configuration
+        
+        Args:
+            key_param     (str): key_param to read from "event" or "environment" variable
+            default_param (str): default value
+            
+        Returns:
+            string: parameter value or None
+        
+        """
+        return self.event.get(key_param, os.environ.get(key_param, default_param))
 
     def send_to_es(self, path, method="GET", payload={}):
         """Low-level POST data to Amazon Elasticsearch Service generating a Sigv4 signed request
