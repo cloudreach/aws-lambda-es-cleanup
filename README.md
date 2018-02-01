@@ -67,8 +67,12 @@ $ aws lambda create-function \
 	--handler es-cleanup.lambda_handler \
 	--runtime python2.7 \
 	--timeout 180
+```
 
-$ # test
+### Lambda invoke with parameters
+is it possible to override the default behaviour passing specific payload
+
+```bash
 $ aws lambda invoke
  --function-name es-cleanup-lambda \
  outfile --payload \
