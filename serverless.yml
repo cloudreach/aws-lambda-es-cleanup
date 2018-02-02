@@ -6,6 +6,8 @@ provider:
   stage: prod
   region: eu-west-1
   profile: ${env:AWS_DEFAULT_PROFILE}
+  deploymentBucket:
+    name: ${env:S3_DEPLOYMENT_BUCKET}
   environment:
     es_endpoint: search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
     index: all
@@ -31,7 +33,7 @@ functions:
     description: ES old index removal
     runtime: python2.7
     memorySize: "128"
-    timeout: 180
+    timeout: 300
     package:
       exclude:
         - ./**
@@ -43,3 +45,6 @@ functions:
     events:
       # Invoke Lambda function every night at 01.00 AM
       - schedule: cron(0 1 * * ? *)
+
+resources:
+  Description: "AWS Lambda: Elasticsearch Index Cleanup"      
