@@ -2,7 +2,7 @@ data "template_file" "policy" {
   template = "${file("${path.module}/files/es_policy.json")}"
 
   vars {
-    var.es_endpoint = "${var.es_endpoint}"
+    es_arn = "${var.es_arn}"
   }
 }
 
