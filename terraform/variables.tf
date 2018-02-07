@@ -45,3 +45,4 @@ variable "tags" {
     Name = "es-cleanup"
   }
 }
+variable "sg_ids" {}
