@@ -32,3 +32,9 @@ resource "aws_iam_role_policy_attachment" "policy_attachment" {
   role       = "${aws_iam_role.role.name}"
   policy_arn = "${aws_iam_policy.policy.arn}"
 }
+
+resource "aws_iam_role_policy_attachment" "vpc-execution" {
+  count      = "${length(var.subnet_ids) > 0 ? 1 : 0}"
+  role       = "${aws_iam_role.role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+}
