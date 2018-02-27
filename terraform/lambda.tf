@@ -23,6 +23,8 @@ resource "aws_lambda_function" "es_cleanup" {
     }
   }
 
+  # This will be a code block with empty lists if we don't create a securitygroup and the subnet_ids are empty.
+  # When these lists are empty it will deploy the lambda without VPC support.
   vpc_config {
     subnet_ids         = ["${var.subnet_ids}"]
     security_group_ids = ["${aws_security_group.lambda.*.id}"]

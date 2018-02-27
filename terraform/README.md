@@ -8,6 +8,7 @@ Particularly it creates:
 1. Lambda function that does the deletion
 2. IAM role and policy that allows access to ES
 3. Cloudwatch event rule that triggers the lambda function on a schedule
+4. (Only when your Lambda is deployed inside a VPC) Securitygroup for Lambda function
 
 ## Module Input Variables
 
@@ -29,7 +30,8 @@ instances of this stack for different environments and regions.
 * `python_version` - Python version to be used. Defaults to 2.7
 Default is once a day at 03:00 GMT.
 See: http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
-
+* `subnet_ids` - Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC.
+* `elasticsearch_sg_id` - Security group ID of the AWS elasticsearch service. Only fill this in if you deploy Lambda function inside a VPC.
 ## Usage
 
 ```
