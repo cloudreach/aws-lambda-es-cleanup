@@ -38,11 +38,6 @@ variable "subnet_ids" {
   default     = []
 }
 
-variable "elasticsearch_sg_id" {
-  description = "Security group ID of the AWS elasticsearch service"
-  default     = ""
-}
-
 variable "tags" {
   description = "Tags to apply"
   default = {
