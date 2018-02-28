@@ -85,16 +85,16 @@ Create your AWS Cloudwatch rule:
 $ aws events put-rule \
 	--name my-scheduled-rule \
 	--schedule-expression 'cron(0 1 * * ? *)'
-    
-    
+
+
 $ aws lambda add-permission \
 	--function-name es-cleanup-lambda \
 	--statement-id my-scheduled-event \
 	--action 'lambda:InvokeFunction' \
 	--principal events.amazonaws.com \
 	--source-arn arn:aws:events:eu-west-1:123456789012:rule/my-scheduled-rule    
-    
-    
+
+
 $ aws events put-targets \
 	--rule my-scheduled-rule \
 	--targets file://json_file/cloudwatch-target.json
@@ -104,13 +104,13 @@ $ aws events put-targets \
 
 Using AWS environment variable you can easily modify the behaviour of the Lambda function
 
-| Variable Name | Example Value | Description | Default Value | Required | 
+| Variable Name | Example Value | Description | Default Value | Required |
 | --- | --- | --- | --- |  --- |
-| es_endpoint | search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com  | AWS ES fqdn | `None` | True | 
+| es_endpoint | search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com  | AWS ES fqdn | `None` | True |
 | index |  `logstash,cwl` | Index/indices to process comma separated, with `all` every index will be processed except `.kibana` | `all` | False |
-| index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False | 
-| delete_after | `7` | Numbers of days to preserve | `15` |  False | 
-| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to pusblish any alert | | False |
+| index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
+| delete_after | `7` | Numbers of days to preserve | `15` |  False |
+| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to publish any alert | | False |
 
 ## Serverless Framework
 
@@ -144,7 +144,7 @@ functions:
   es-cleanup-lambda: es-cleanup-lambda-prod-es-cleanup-lambda
 ```
 
-### Terraform deployment 
+### Terraform deployment
 
 This lambda function can be also build using terraform followings this [README](terraform/README.md).
 

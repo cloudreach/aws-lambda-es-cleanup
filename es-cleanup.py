@@ -3,6 +3,12 @@
 """
 This AWS Lambda function allowed to delete the old Elasticsearch index
 """
+import os
+import json
+import time
+import boto3
+import datetime
+
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
@@ -13,10 +19,6 @@ if sys.version_info[0] == 3:
     from urllib.request import quote
 else:
     from urllib import quote
-import datetime
-import json
-import time
-import os
 
 
 class ES_Exception(Exception):
@@ -38,7 +40,7 @@ class ES_Cleanup(object):
 
     def __init__(self, event, context):
         """Main Class init
-       
+
         Args:
             event (dict): AWS Cloudwatch Scheduled Event
             context (object): AWS running context
@@ -48,42 +50,42 @@ class ES_Cleanup(object):
         self.context = context
 
         self.cfg = {}
-        self.cfg["es_endpoint"] =  self.get_parameter("es_endpoint")
+        self.cfg["es_endpoint"] = self.get_parameter("es_endpoint")
         self.cfg["index"] = self.get_parameter("index", "all").split(",")
 
         self.cfg["delete_after"] = int(self.get_parameter("delete_after", 15))
         self.cfg["es_max_retry"] = int(self.get_parameter("es_max_retry", 3))
-        self.cfg["index_format"] = self.get_parameter("index_format", "%Y.%m.%d")
+        self.cfg["index_format"] = self.get_parameter(
+            "index_format", "%Y.%m.%d")
         self.cfg["sns_alert"] = self.get_parameter("sns_alert", "")
 
         if not self.cfg["es_endpoint"]:
             raise Exception("[es_endpoint] OS variable is not set")
-            
-            
-    def get_parameter(self, key_param, default_param = None):
+
+    def get_parameter(self, key_param, default_param=None):
         """helper function to retrieve specific configuration
-        
+
         Args:
             key_param     (str): key_param to read from "event" or "environment" variable
             default_param (str): default value
-            
+
         Returns:
             string: parameter value or None
-        
+
         """
         return self.event.get(key_param, os.environ.get(key_param, default_param))
 
     def send_to_es(self, path, method="GET", payload={}):
         """Low-level POST data to Amazon Elasticsearch Service generating a Sigv4 signed request
-        
+
         Args:
             path (str): path to send to ES
             method (str, optional): HTTP method default:GET
             payload (dict, optional): additional payload used during POST or PUT
-        
+
         Returns:
             dict: json answer converted in dict
-        
+
         Raises:
             #: Error during ES communication
             ES_Exception: Description
@@ -103,7 +105,8 @@ class ES_Cleanup(object):
 
             req = AWSRequest(
                 method=method,
-                url="https://%s%s?pretty&format=json" % (self.cfg["es_endpoint"], quote(path)),
+                url="https://{}{}?pretty&format=json".format(
+                    self.cfg["es_endpoint"], quote(path)),
                 data=payload,
                 headers={'Host': self.cfg["es_endpoint"]})
             credential_resolver = create_credential_resolver(get_session())
@@ -128,10 +131,10 @@ class ES_Cleanup(object):
 
     def send_error(self, msg):
         """Send SNS error
-        
+
         Args:
             msg (str): error string
-        
+
         Returns:
             None
         """
@@ -140,15 +143,14 @@ class ES_Cleanup(object):
         if self.cfg["sns_alert"] != "":
             sns_region = self.cfg["sns_alert"].split(":")[4]
             sns = boto3.client("sns", region_name=sns_region)
-            response = sns.publish(
-                TopicArn=self.cfg["sns_alert"], Message=_msg)
+            sns.publish(TopicArn=self.cfg["sns_alert"], Message=_msg)
 
     def delete_index(self, index_name):
         """ES DELETE specific index
-        
+
         Args:
             index_name (str): Index name
-        
+
         Returns:
             dict: ES answer
         """
@@ -156,7 +158,7 @@ class ES_Cleanup(object):
 
     def get_indices(self):
         """ES Get indices
-        
+
         Returns:
             dict: ES answer
         """
