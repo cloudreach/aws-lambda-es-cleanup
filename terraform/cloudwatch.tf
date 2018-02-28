@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "${var.prefix}es-cleanup-execution-schedule"
-  description         = "es-cleanup execution schedule"
+  description         = "${var.prefix}es-cleanup execution schedule"
   schedule_expression = "${var.schedule}"
 }
 
