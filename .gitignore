@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+**/.terraform
+**/terraform.tfstate*
+
+**/*es-cleanup.zip
 .serverless
 # Distribution / packaging
 .Python
