@@ -20,7 +20,7 @@ variable "index" {
 
 variable "delete_after" {
   description = "Numbers of days to preserve"
-  default     = 7
+  default     = 15
 }
 
 variable "index_format" {
