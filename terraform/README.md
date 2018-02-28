@@ -19,29 +19,14 @@ Particularly it creates:
 | index |  `logstash,cwl` | Index/indices to process comma separated, with `all` every index will be processed except `.kibana` | `all` | False |
 | index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
 | delete_after | `7` | Numbers of days to preserve | `15` |  False |
+| python_version | `2.7` | Python version to be used | `2.7` |  False |
+| schedule | `cron(0 3 * * ? *)` | Cron Schedule expression for running the cleanup function | `cron(0 3 * * ? *)` |  False |
 | sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to publish any alert | | False |
 | prefix | `public-` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
+| subnet_ids | `["subnet-1111111", "subnet-222222"]` | Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC. | | False |
 
-### Required
 
-* `es_endpoint` - Elasticsearch endpoint.
-
-### Optional
-
-* `index` - Prefix of the index names. e.g. `logstash` if your indices look
-like `logstash-2017.10.30`.
-* `delete_after` - How many days old to keep. Default 7
-* `index_format` - Variable section of the index names, if
-you indices look like `logstash-2017.10.30`. Default `%Y.%m.%d`
-* `sns_alert` - SNS topic ARN to send failure alerts to.
-* `prefix` - A prefix for the resource names, this helps create multiple
-instances of this stack for different environments and regions.
-* `schedule` - Schedule expression for running the cleanup function.
-* `python_version` - Python version to be used. Defaults to 2.7
-Default is once a day at 03:00 GMT.
-See: http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
-* `subnet_ids` - Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC.
-## Usage
+## Example
 
 ```
 module "public_es_cleanup" {
