@@ -3,36 +3,25 @@ data "aws_subnet" "selected" {
   id    = "${var.subnet_ids[0]}"
 }
 
+
 resource "aws_security_group" "lambda" {
   count       = "${length(var.subnet_ids) > 0 ? 1 : 0}"
-  name        = "lambda_cleanup_to_elasticsearch_${var.prefix}"
-  description = "Lambda sg for cleanup function to elasticsearch"
+  name        = "${var.prefix}lambda_cleanup_to_elasticsearch"
+  description = "${var.prefix}lambda_cleanup_to_elasticsearch"
   vpc_id      = "${data.aws_subnet.selected.vpc_id}"
 
-  tags {
-    Name        = "lambda_function_to_elasticsearch_${var.prefix}"
-    Environment = "${var.prefix}"
+
+  egress {
+    from_port       = 443
+    to_port         = 443
+    protocol        = "tcp"
+    cidr_blocks     = ["0.0.0.0/0"]
   }
-}
 
-resource "aws_security_group_rule" "lambda_to_es" {
-  count                    = "${length(var.subnet_ids) > 0 ? 1 : 0}"
-  type                     = "egress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = "${var.elasticsearch_sg_id}"
 
-  security_group_id = "${aws_security_group.lambda.id}"
-}
+  tags = "${merge(
+            var.tags,
+            map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
+            )}"
 
-resource "aws_security_group_rule" "es_from_lambda" {
-  count                    = "${length(var.subnet_ids) > 0 ? 1 : 0}"
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  source_security_group_id = "${aws_security_group.lambda.id}"
-
-  security_group_id = "${var.elasticsearch_sg_id}"
 }
