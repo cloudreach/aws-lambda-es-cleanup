@@ -30,21 +30,21 @@ Particularly it creates:
 
 ```
 module "public_es_cleanup" {
-  source = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform"
+  source       = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform"
 
   prefix       = "public_es_"
   es_endpoint  = "test-es-XXXXXXX.eu-central-1.es.amazonaws.com"
-  delete_after = 60
+  delete_after = 365
 }
 
 
 module "vpc_es_cleanup" {
-  source = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform"
+  source       = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform"
 
   prefix       = "vpc_es_"
   es_endpoint  = "vpc-gc-demo-vpc-gloo5rzcdhyiykwdlots2hdjla.eu-central-1.es.amazonaws.com"
   index        = "all"
   delete_after = 30
-  subnet_ids     = ["subnet-d8660da2"]
+  subnet_ids   = ["subnet-d8660da2"]
 }
 ```
