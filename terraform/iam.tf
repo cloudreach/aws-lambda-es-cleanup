@@ -5,7 +5,7 @@ data "template_file" "policy" {
 resource "aws_iam_policy" "policy" {
   name        = "${var.prefix}es-cleanup"
   path        = "/"
-  description = "Policy for es-cleanup Lambda function"
+  description = "Policy for ${var.prefix}es-cleanup Lambda function"
   policy      = "${data.template_file.policy.rendered}"
 }
 
@@ -33,7 +33,7 @@ resource "aws_iam_role_policy_attachment" "policy_attachment" {
   policy_arn = "${aws_iam_policy.policy.arn}"
 }
 
-resource "aws_iam_role_policy_attachment" "vpc-execution" {
+resource "aws_iam_role_policy_attachment" "policy_attachment_vpc" {
   count      = "${length(var.subnet_ids) > 0 ? 1 : 0}"
   role       = "${aws_iam_role.role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
