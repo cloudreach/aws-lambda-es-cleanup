@@ -29,6 +29,10 @@ Particularly it creates:
 ## Example
 
 ```
+provider "aws" {
+  region = "eu-central-1"
+}
+
 module "public_es_cleanup" {
   source       = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform"
 
