@@ -49,8 +49,8 @@ resource "aws_lambda_function" "es_cleanup" {
   source_code_hash = "${data.archive_file.es_cleanup_lambda.output_base64sha256}"
 
   vpc_config {
-    subnet_ids         = ["${var.subnet_ids}"]
-    security_group_ids = ["${var.sg_ids}"]
+    subnet_ids         = ["${split(",", var.subnet_ids)}"]
+    security_group_ids = ["${split(",", var.sg_ids)}"]
   }
 
   environment {
