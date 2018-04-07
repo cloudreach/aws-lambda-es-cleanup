@@ -37,8 +37,6 @@ resource "aws_lambda_function" "es_cleanup_vpc" {
   }
 }
 
-
-
 resource "aws_lambda_function" "es_cleanup" {
   count            = "${length(var.subnet_ids) == 0 ? 1 : 0}"
   filename         = "${path.module}/es-cleanup.zip"
@@ -49,6 +47,11 @@ resource "aws_lambda_function" "es_cleanup" {
   role             = "${aws_iam_role.role.arn}"
   handler          = "es-cleanup.lambda_handler"
   source_code_hash = "${data.archive_file.es_cleanup_lambda.output_base64sha256}"
+
+  vpc_config {
+    subnet_ids         = ["${split(",", var.subnet_ids)}"]
+    security_group_ids = ["${split(",", var.sg_ids)}"]
+  }
 
   environment {
     variables = {

@@ -1,5 +1,9 @@
 data "template_file" "policy" {
   template = "${file("${path.module}/files/es_policy.json")}"
+
+  vars {
+    es_arn = "${var.es_arn}"
+  }
 }
 
 resource "aws_iam_policy" "policy" {

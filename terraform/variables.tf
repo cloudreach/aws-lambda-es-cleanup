@@ -17,6 +17,7 @@ variable "index" {
   description = "Index/indices to process comma separated, with all every index will be processed except '.kibana'"
   default     = "all"
 }
+variable "es_arn" {}
 
 variable "delete_after" {
   description = "Numbers of days to preserve"
@@ -44,3 +45,4 @@ variable "tags" {
     Name = "es-cleanup"
   }
 }
+variable "sg_ids" {}
