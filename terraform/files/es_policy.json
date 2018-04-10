@@ -26,7 +26,7 @@
       "Action": [
         "es:*"
       ],
-      "Resource": "${es_arn}"
+      "Resource": "*"
     }
   ]
 }
