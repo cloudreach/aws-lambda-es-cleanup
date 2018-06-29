@@ -4,12 +4,12 @@ service: es-cleanup-lambda
 provider:
   name: aws
   stage: prod
-  region: eu-west-1
-  profile: ${env:AWS_DEFAULT_PROFILE}
-  deploymentBucket:
-    name: ${env:S3_DEPLOYMENT_BUCKET}
+  region: us-west-2
+  # profile: ${env:AWS_DEFAULT_PROFILE}
+  # deploymentBucket:
+  #   name: ${env:S3_DEPLOYMENT_BUCKET}
   environment:
-    es_endpoint: search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
+    es_endpoint: "${ES_ENDPOINT}"
     index: all
     delete_after: "7"
     index_format: "%Y.%m.%d"
@@ -21,7 +21,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "es:*"
-      Resource: "arn:aws:es:eu-west-1:123456789012:domain/es-demo/*"
+      Resource: "${ES_RESOURCE}"
       # you must specify the full ARN  of the AWS ES Domain
 
 
@@ -47,4 +47,4 @@ functions:
       - schedule: cron(0 1 * * ? *)
 
 resources:
-  Description: "AWS Lambda: Elasticsearch Index Cleanup"      
+  Description: "AWS Lambda: Elasticsearch Index Cleanup"
