@@ -183,8 +183,10 @@ def lambda_handler(event, context):
             # ignore .kibana index
             continue
 
-        idx_name = '-'.join(word for word in index["index"].split("-")[:-1])
-        idx_date = index["index"].split("-")[-1]
+        idx_split = index["index"].rsplit("-",
+            1 + es.cfg["index_format"].count("-"))
+        idx_name = idx_split[0]
+        idx_date = '-'.join(word for word in idx_split[1:])
 
         if idx_name in es.cfg["index"] or "all" in es.cfg["index"]:
 
