@@ -38,6 +38,12 @@ variable "subnet_ids" {
   default     = []
 }
 
+variable "security_group_ids" {
+  description = "Addiational Security Ids To add."
+  type        = "list"
+  default     = []
+}
+
 variable "tags" {
   description = "Tags to apply"
   default = {
