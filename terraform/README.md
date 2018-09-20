@@ -23,6 +23,7 @@ Particularly it creates:
 | schedule | `cron(0 3 * * ? *)` | Cron Schedule expression for running the cleanup function | `cron(0 3 * * ? *)` |  False |
 | sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to publish any alert | | False |
 | prefix | `public-` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
+| suffix | `-public` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
 | subnet_ids | `["subnet-1111111", "subnet-222222"]` | Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC. | | False |
 | security_group_ids | `["sg-1111111", "sg-222222"]` | Addiational Security Ids to add. | | False |
 

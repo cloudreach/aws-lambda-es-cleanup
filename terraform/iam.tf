@@ -3,14 +3,14 @@ data "template_file" "policy" {
 }
 
 resource "aws_iam_policy" "policy" {
-  name        = "${var.prefix}es-cleanup"
+  name        = "${var.prefix}es-cleanup${var.suffix}"
   path        = "/"
-  description = "Policy for ${var.prefix}es-cleanup Lambda function"
+  description = "Policy for ${var.prefix}es-cleanup${var.suffix} Lambda function"
   policy      = "${data.template_file.policy.rendered}"
 }
 
 resource "aws_iam_role" "role" {
-  name = "${var.prefix}es-cleanup"
+  name = "${var.prefix}es-cleanup${var.suffix}"
 
   assume_role_policy = <<EOF
 {
