@@ -1,11 +1,11 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
-  name                = "${var.prefix}es-cleanup-execution-schedule"
-  description         = "${var.prefix}es-cleanup execution schedule"
+  name                = "${var.prefix}es-cleanup-execution-schedule${var.suffix}"
+  description         = "${var.prefix}es-cleanup execution schedule${var.suffix}"
   schedule_expression = "${var.schedule}"
 }
 
 resource "aws_cloudwatch_event_target" "es_cleanup" {
-  target_id = "${var.prefix}lambda-es-cleanup"
+  target_id = "${var.prefix}lambda-es-cleanup${var.suffix}"
   rule      = "${aws_cloudwatch_event_rule.schedule.name}"
   arn       = "${aws_lambda_function.es_cleanup.arn}"
 }

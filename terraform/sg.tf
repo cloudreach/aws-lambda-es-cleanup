@@ -6,8 +6,8 @@ data "aws_subnet" "selected" {
 
 resource "aws_security_group" "lambda" {
   count       = "${length(var.subnet_ids) > 0 ? 1 : 0}"
-  name        = "${var.prefix}lambda_cleanup_to_elasticsearch"
-  description = "${var.prefix}lambda_cleanup_to_elasticsearch"
+  name        = "${var.prefix}lambda_cleanup_to_elasticsearch${var.suffix}"
+  description = "${var.prefix}lambda_cleanup_to_elasticsearch${var.suffix}"
   vpc_id      = "${data.aws_subnet.selected.vpc_id}"
 
 
@@ -35,7 +35,7 @@ resource "aws_security_group" "lambda" {
 
   tags = "${merge(
             var.tags,
-            map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
+            map("Scope", "${var.prefix}lambda_function_to_elasticsearch${var.suffix}"),
             )}"
 
 }

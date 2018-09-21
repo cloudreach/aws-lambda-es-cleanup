@@ -2,6 +2,10 @@ variable "prefix" {
   default = ""
 }
 
+variable "suffix" {
+  default = ""
+}
+
 variable "schedule" {
   default = "cron(0 3 * * ? *)"
 }

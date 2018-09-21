@@ -10,8 +10,8 @@ locals {
 
 resource "aws_lambda_function" "es_cleanup" {
   filename         = "${path.module}/es-cleanup.zip"
-  function_name    = "${var.prefix}es-cleanup"
-  description      = "${var.prefix}es-cleanup"
+  function_name    = "${var.prefix}es-cleanup${var.suffix}"
+  description      = "${var.prefix}es-cleanup${var.suffix}"
   timeout          = 300
   runtime          = "python${var.python_version}"
   role             = "${aws_iam_role.role.arn}"
@@ -30,7 +30,7 @@ resource "aws_lambda_function" "es_cleanup" {
 
   tags = "${merge(
             var.tags,
-            map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
+            map("Scope", "${var.prefix}lambda_function_to_elasticsearch${var.suffix}"),
             )}"
   # This will be a code block with empty lists if we don't create a securitygroup and the subnet_ids are empty.
   # When these lists are empty it will deploy the lambda without VPC support.
