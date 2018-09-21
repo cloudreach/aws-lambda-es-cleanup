@@ -3,6 +3,14 @@
 ## Overview
 This AWS Lambda function allows you to delete the old Elasticsearch indexes using SigV4Auth authentication. You configure the AWS Elasticsearch Access Policy authorizing the Lambda Role or the AWS Account number instead of using the IP address whitelist.
 
+## Diagram
+
+<p align="center">
+  <img src="diagram.png">
+</p>
+
+
+
 ## Getting Started
 ### How To install
 
