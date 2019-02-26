@@ -14,6 +14,8 @@ from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
 from botocore.session import get_session
 from botocore.vendored.requests import Session
+from json import dumps
+
 import sys
 if sys.version_info[0] == 3:
     from urllib.request import quote
@@ -107,7 +109,7 @@ class ES_Cleanup(object):
                 method=method,
                 url="https://{}{}?pretty&format=json".format(
                     self.cfg["es_endpoint"], quote(path)),
-                data=payload,
+                data=dumps(payload),
                 headers={'Host': self.cfg["es_endpoint"]})
             credential_resolver = create_credential_resolver(get_session())
             credentials = credential_resolver.load_credentials()
