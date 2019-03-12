@@ -8,6 +8,7 @@ locals {
   sg_ids = ["${element(concat(aws_security_group.lambda.*.id, list("")), 0)}"]
 }
 
+
 resource "aws_lambda_function" "es_cleanup" {
   filename         = "${path.module}/es-cleanup.zip"
   function_name    = "${var.prefix}es-cleanup${var.suffix}"

@@ -95,20 +95,25 @@ class ES_Cleanup(object):
 
         es_region = self.cfg["es_endpoint"].split(".")[1]
 
+        headers = {
+                "Host": self.cfg["es_endpoint"],
+                "Content-Type": "application/json"
+            }
+
         # send to ES with exponential backoff
         retries = 0
         while retries < int(self.cfg["es_max_retry"]):
             if retries > 0:
                 seconds = (2**retries) * .1
-                # print('Waiting for %.1f seconds', seconds)
                 time.sleep(seconds)
 
             req = AWSRequest(
                 method=method,
-                url="https://{}{}?pretty&format=json".format(
+                url="https://{}{}".format(
                     self.cfg["es_endpoint"], quote(path)),
-                data=payload,
-                headers={'Host': self.cfg["es_endpoint"]})
+                data=json.dumps(payload),
+                params={"format": "json"},
+                headers=headers)
             credential_resolver = create_credential_resolver(get_session())
             credentials = credential_resolver.load_credentials()
             SigV4Auth(credentials, 'es', es_region).add_auth(req)
@@ -118,7 +123,6 @@ class ES_Cleanup(object):
                 session = Session()
                 res = session.send(preq)
                 if res.status_code >= 200 and res.status_code <= 299:
-                    # print("%s %s" % (res.status_code, res.content))
                     return json.loads(res.content)
                 else:
                     raise ES_Exception(res.status_code, res._content)
@@ -128,22 +132,6 @@ class ES_Cleanup(object):
                     retries += 1  # Candidate for retry
                 else:
                     raise  # Stop retrying, re-raise exception
-
-    def send_error(self, msg):
-        """Send SNS error
-
-        Args:
-            msg (str): error string
-
-        Returns:
-            None
-        """
-        _msg = "[%s][%s] %s" % (self.name, self.cur_account, msg)
-        print(_msg)
-        if self.cfg["sns_alert"] != "":
-            sns_region = self.cfg["sns_alert"].split(":")[4]
-            sns = boto3.client("sns", region_name=sns_region)
-            sns.publish(TopicArn=self.cfg["sns_alert"], Message=_msg)
 
     def delete_index(self, index_name):
         """ES DELETE specific index
