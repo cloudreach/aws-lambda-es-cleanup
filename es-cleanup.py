@@ -166,7 +166,7 @@ def lambda_handler(event, context):
     earliest_to_keep = datetime.date.today() - datetime.timedelta(
         days=int(es.cfg["delete_after"]))
     for index in es.get_indices():
-
+        print("Found index: %s", index["index"])
         if index["index"] == ".kibana":
             # ignore .kibana index
             continue
@@ -181,6 +181,10 @@ def lambda_handler(event, context):
             if idx_date <= earliest_to_keep.strftime(es.cfg["index_format"]):
                 print("Deleting index: %s" % index["index"])
                 es.delete_index(index["index"])
+            else:
+                print("Keeping index: %s" % index["index"])
+        else:
+            print("Index %s name %s did not match pattern %s", index["index"], idx_name, es.cfg["index"])
 
 
 if __name__ == '__main__':
