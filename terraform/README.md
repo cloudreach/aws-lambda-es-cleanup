@@ -37,7 +37,7 @@ provider "aws" {
 }
 
 module "public_es_cleanup" {
-  source       = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform?ref=v0.7"
+  source       = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform?ref=v0.10"
 
   prefix       = "public_es_"
   es_endpoint  = "test-es-XXXXXXX.eu-central-1.es.amazonaws.com"
@@ -46,7 +46,7 @@ module "public_es_cleanup" {
 
 
 module "vpc_es_cleanup" {
-  source             = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform?ref=v0.7"
+  source             = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform?ref=v0.10"
 
   prefix             = "vpc_es_"
   es_endpoint        = "vpc-gc-demo-vpc-gloo5rzcdhyiykwdlots2hdjla.eu-central-1.es.amazonaws.com"
