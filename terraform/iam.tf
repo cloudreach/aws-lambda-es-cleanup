@@ -1,12 +1,53 @@
-data "template_file" "policy" {
-  template = "${file("${path.module}/files/es_policy.json")}"
+
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "policy" {
+ 
+  statement {
+    sid = "LambdaLogCreation"
+    effect = "Allow"
+    actions = [
+      "logs:CreateLogGroup",
+      "logs:CreateLogStream",
+      "logs:PutLogEvents"
+    ]
+    resources = [
+          "arn:aws:logs:${data.aws_region.current.name}:*:log-group:/aws/lambda/${var.prefix}es-cleanup${var.suffix}",
+          "arn:aws:logs:${data.aws_region.current.name}:*:log-group:/aws/lambda/${var.prefix}es-cleanup${var.suffix}:*",
+        ]
+  }
+
+  statement {
+    sid = "LambdaVPCconfig"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface"
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "ESPermission"
+    effect = "Allow"
+    actions = [
+      "es:*"
+    ]
+    resources = [
+      "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/*"
+    ]
+  }
+
 }
+
 
 resource "aws_iam_policy" "policy" {
   name        = "${var.prefix}es-cleanup${var.suffix}"
   path        = "/"
   description = "Policy for ${var.prefix}es-cleanup${var.suffix} Lambda function"
-  policy      = "${data.template_file.policy.rendered}"
+  policy      = "${data.aws_iam_policy_document.policy.json}"
 }
 
 resource "aws_iam_role" "role" {

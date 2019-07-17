@@ -17,3 +17,10 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.schedule.arn}"
 }
+
+
+
+resource "aws_cloudwatch_log_group" "cwlog" {
+  name  = "/aws/lambda/${var.prefix}es-cleanup${var.suffix}"
+}
+
