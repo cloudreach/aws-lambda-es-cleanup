@@ -1,14 +1,10 @@
-# terraform module
+# Terraform Registry
 
-This directory contains terraform 0.9 module for deleting old Elasticsearch
-indices.
+This module is available as [Registry](https://registry.terraform.io/modules/giuliocalzolari/es-cleanup/)
+Terraform modules will be moved in a dedicated [Github Repo](https://github.com/giuliocalzolari/terraform-aws-es-cleanup) to make it easier
 
-Particularly it creates:
-
-1. Lambda function that does the deletion
-2. IAM role and policy that allows access to ES
-3. Cloudwatch event rule that triggers the lambda function on a schedule
-4. (Only when your Lambda is deployed inside a VPC) Securitygroup for Lambda function
+## For backwards compatibility this terraform code will be maintained 
+Please Use [Terraform Registry](https://registry.terraform.io/modules/giuliocalzolari/es-cleanup/)
 
 ## Module Input Variables
 
@@ -20,7 +16,7 @@ Particularly it creates:
 | skip_index |  `.kibana,.kibana_5` | Index/indices to skip  | `.kibana` | False |
 | index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
 | delete_after | `7` | Numbers of days to preserve | `15` |  False |
-| python_version | `2.7` | Python version to be used | `2.7` |  False |
+| python_version | `3.6` | Python version to be used | `3.6` |  False |
 | schedule | `cron(0 3 * * ? *)` | Cron Schedule expression for running the cleanup function | `cron(0 3 * * ? *)` |  False |
 | sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to publish any alert | | False |
 | prefix | `public-` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
