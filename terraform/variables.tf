@@ -22,6 +22,11 @@ variable "index" {
   default     = "all"
 }
 
+variable "skip_index" {
+  description = "Index/indices to skip"
+  default     = ".kibana"
+}
+
 variable "delete_after" {
   description = "Numbers of days to preserve"
   default     = 15

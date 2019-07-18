@@ -52,6 +52,7 @@ class ES_Cleanup(object):
         self.cfg = {}
         self.cfg["es_endpoint"] = self.get_parameter("es_endpoint")
         self.cfg["index"] = self.get_parameter("index", "all").split(",")
+        self.cfg["skip_index"] = self.get_parameter("skip_index", ".kibana").split(",")
 
         self.cfg["delete_after"] = int(self.get_parameter("delete_after", 15))
         self.cfg["es_max_retry"] = int(self.get_parameter("es_max_retry", 3))
@@ -167,7 +168,7 @@ def lambda_handler(event, context):
         days=int(es.cfg["delete_after"]))
     for index in es.get_indices():
         print("Found index: {}".format(index["index"]))
-        if index["index"] == ".kibana":
+        if index["index"] in es.cfg["skip_index"]:
             # ignore .kibana index
             continue
 
