@@ -22,6 +22,7 @@ resource "aws_lambda_function" "es_cleanup" {
     variables = {
       es_endpoint  = "${var.es_endpoint}"
       index        = "${var.index}"
+      skip_index   = "${var.skip_index}"
       delete_after = "${var.delete_after}"
       index_format = "${var.index_format}"
       sns_alert    = "${var.sns_alert}"
