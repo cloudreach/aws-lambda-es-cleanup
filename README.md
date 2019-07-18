@@ -37,6 +37,16 @@ $ aws iam put-role-policy --role-name es-cleanup-lambda \
     --policy-document file://json_file/es_policy.json
 ```
 
+
+if your lambda is running inside the VPC also attach the these policies
+
+
+```
+arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+````
+
+
 Create your Lambda package
 
 ```bash
@@ -59,7 +69,7 @@ $ aws lambda create-function \
 	--description "Elastichsearch Index Cleanup" \
 	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
 	--handler es-cleanup.lambda_handler \
-	--runtime python2.7 \
+	--runtime python3.6 \
 	--timeout 180
 ```
 
@@ -73,7 +83,7 @@ $ aws lambda create-function \
 	--description "Elastichsearch Index Cleanup" \
 	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
 	--handler es-cleanup.lambda_handler \
-	--runtime python2.7 \
+	--runtime python3.6 \
 	--timeout 180
 ```
 
@@ -119,7 +129,6 @@ Using AWS environment variable you can easily modify the behaviour of the Lambda
 | skip_index |  `.kibana,.kibana_5` | Index/indices to skip  | `.kibana` | False |
 | index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
 | delete_after | `7` | Numbers of days to preserve | `15` |  False |
-| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to publish any alert | | False |
 
 ## Serverless Framework
 

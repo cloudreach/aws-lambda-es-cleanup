@@ -38,7 +38,7 @@ variable "index_format" {
 }
 
 variable "python_version" {
-  default = "2.7"
+  default = "3.6"
 }
 
 variable "subnet_ids" {
