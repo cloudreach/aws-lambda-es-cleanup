@@ -12,8 +12,8 @@ import datetime
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
+from botocore.httpsession import URLLib3Session
 from botocore.session import get_session
-from botocore.vendored.requests import Session
 import sys
 if sys.version_info[0] == 3:
     from urllib.request import quote
@@ -121,7 +121,7 @@ class ES_Cleanup(object):
 
             try:
                 preq = req.prepare()
-                session = Session()
+                session = URLLib3Session()
                 res = session.send(preq)
                 if res.status_code >= 200 and res.status_code <= 299:
                     return json.loads(res.content)
