@@ -9,8 +9,8 @@ provider:
   deploymentBucket:
     name: ${env:S3_DEPLOYMENT_BUCKET}
   environment:
-    es_endpoint: search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
-    index: all
+    es_endpoint: search-test-rn6qqe32bkiadqmvbgz6zf7sbq.eu-west-1.es.amazonaws.com
+    index: ".*"
     delete_after: "7"
     index_format: "%Y.%m.%d"
   stackTags: # Optional CF stack tags
@@ -21,7 +21,7 @@ provider:
     - Effect: "Allow"
       Action:
         - "es:*"
-      Resource: "arn:aws:es:eu-west-1:123456789012:domain/es-demo/*"
+      Resource: "arn:aws:es:eu-west-1:565245139611:domain/test/*"
       # you must specify the full ARN  of the AWS ES Domain
 
 
@@ -31,7 +31,7 @@ functions:
     handler: es-cleanup.lambda_handler
     name: es-cleanup-lambda
     description: ES old index removal
-    runtime: python2.7
+    runtime: python3.7
     memorySize: "128"
     timeout: 300
     package:
