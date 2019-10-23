@@ -9,7 +9,7 @@ provider:
   deploymentBucket:
     name: ${env:S3_DEPLOYMENT_BUCKET}
   environment:
-    es_endpoint: ssearch-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
+    es_endpoint: search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
     index: ".*"
     skip_index: ".kibana*"
     delete_after: "7"
