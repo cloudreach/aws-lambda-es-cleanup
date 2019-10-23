@@ -7,14 +7,12 @@ import re
 import os
 import json
 import time
-import boto3
 import datetime
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
 from botocore.httpsession import URLLib3Session
 from botocore.session import get_session
-from botocore.httpsession import URLLib3Session
 import sys
 if sys.version_info[0] == 3:
     from urllib.request import quote
