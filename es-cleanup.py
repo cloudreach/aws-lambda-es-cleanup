@@ -3,12 +3,11 @@
 """
 This AWS Lambda function allowed to delete the old Elasticsearch index
 """
+import re
 import os
 import json
 import time
-import boto3
 import datetime
-
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
@@ -51,14 +50,13 @@ class ES_Cleanup(object):
 
         self.cfg = {}
         self.cfg["es_endpoint"] = self.get_parameter("es_endpoint")
-        self.cfg["index"] = self.get_parameter("index", "all").split(",")
-        self.cfg["skip_index"] = self.get_parameter("skip_index", ".kibana").split(",")
+        self.cfg["index"] = self.get_parameter("index", ".*")
+        self.cfg["skip_index"] = self.get_parameter("skip_index", ".kibana*")
 
         self.cfg["delete_after"] = int(self.get_parameter("delete_after", 15))
         self.cfg["es_max_retry"] = int(self.get_parameter("es_max_retry", 3))
         self.cfg["index_format"] = self.get_parameter(
             "index_format", "%Y.%m.%d")
-        self.cfg["sns_alert"] = self.get_parameter("sns_alert", "")
 
         if not self.cfg["es_endpoint"]:
             raise Exception("[es_endpoint] OS variable is not set")
@@ -168,7 +166,7 @@ def lambda_handler(event, context):
         days=int(es.cfg["delete_after"]))
     for index in es.get_indices():
         print("Found index: {}".format(index["index"]))
-        if index["index"] in es.cfg["skip_index"]:
+        if re.search(es.cfg["skip_index"], index["index"]):
             # ignore .kibana index
             continue
 
@@ -177,7 +175,7 @@ def lambda_handler(event, context):
         idx_name = idx_split[0]
         idx_date = '-'.join(word for word in idx_split[1:])
 
-        if idx_name in es.cfg["index"] or "all" in es.cfg["index"]:
+        if re.search(es.cfg["index"], index["index"]):
 
             if idx_date <= earliest_to_keep.strftime(es.cfg["index_format"]):
                 print("Deleting index: {}".format(index["index"]))
@@ -185,7 +183,7 @@ def lambda_handler(event, context):
             else:
                 print("Keeping index: {}".format(index["index"]))
         else:
-            print("Index {} name {} did not match pattern {}".format(index["index"], idx_name, es.cfg["index"]))
+            print("Index '{}' name '{}' did not match pattern '{}'".format(index["index"], idx_name, es.cfg["index"]))
 
 
 if __name__ == '__main__':

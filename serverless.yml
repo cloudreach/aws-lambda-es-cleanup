@@ -10,7 +10,8 @@ provider:
     name: ${env:S3_DEPLOYMENT_BUCKET}
   environment:
     es_endpoint: search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com
-    index: all
+    index: ".*"
+    skip_index: ".kibana*"
     delete_after: "7"
     index_format: "%Y.%m.%d"
   stackTags: # Optional CF stack tags
@@ -31,7 +32,7 @@ functions:
     handler: es-cleanup.lambda_handler
     name: es-cleanup-lambda
     description: ES old index removal
-    runtime: python2.7
+    runtime: python3.7
     memorySize: "128"
     timeout: 300
     package:
