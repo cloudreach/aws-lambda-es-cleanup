@@ -31,7 +31,6 @@ resource "aws_lambda_function" "es_cleanup" {
       skip_index   = var.skip_index
       delete_after = var.delete_after
       index_format = var.index_format
-      sns_alert    = var.sns_alert
     }
   }
 

@@ -10,22 +10,17 @@ variable "schedule" {
   default = "cron(0 3 * * ? *)"
 }
 
-variable "sns_alert" {
-  description = "SNS ARN to pusblish any alert"
-  default     = ""
-}
-
 variable "es_endpoint" {
 }
 
 variable "index" {
   description = "Index/indices to process comma separated, with all every index will be processed except '.kibana'"
-  default     = "all"
+  default     = ".*"
 }
 
 variable "skip_index" {
   description = "Index/indices to skip"
-  default     = ".kibana"
+  default     = ".kibana*"
 }
 
 variable "delete_after" {

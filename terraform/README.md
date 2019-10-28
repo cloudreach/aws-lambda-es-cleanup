@@ -11,14 +11,13 @@ Please Use [Terraform Registry](https://registry.terraform.io/modules/giuliocalz
 
 | Variable Name | Example Value | Description | Default Value | Required |
 | --- | --- | --- | --- |  --- |
-| es_endpoint | search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com  | AWS ES fqdn | `None` | True |
-| index |  `logstash,cwl` | Index/indices to process comma separated, with `all` every index will be processed except `.kibana` | `all` | False |
-| skip_index |  `.kibana,.kibana_5` | Index/indices to skip  | `.kibana` | False |
+| es_endpoint | `search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com`  | AWS ES fqdn | `None` | True |
+| index |  `logstash-*` | Index/indices to process comma separated, with `all` every index will be processed except `skip_index` | `.*` | False |
+| skip_index |  `.kibana*` | Index/indices to skip  | `.kibana*` | False |
 | index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
 | delete_after | `7` | Numbers of days to preserve | `15` |  False |
 | python_version | `3.6` | Python version to be used | `3.6` |  False |
 | schedule | `cron(0 3 * * ? *)` | Cron Schedule expression for running the cleanup function | `cron(0 3 * * ? *)` |  False |
-| sns_alert | `arn:aws:sns:eu-west-1:123456789012:sns-alert` | SNS ARN to publish any alert | | False |
 | prefix | `public-` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
 | suffix | `-public` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
 | subnet_ids | `["subnet-1111111", "subnet-222222"]` | Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC. | | False |
@@ -28,9 +27,12 @@ Please Use [Terraform Registry](https://registry.terraform.io/modules/giuliocalz
 ## Example
 
 ```
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
   region = "eu-west-1"
-  version = "~> 1.35.0"
 }
 
 module "public_es_cleanup" {
@@ -43,7 +45,7 @@ module "public_es_cleanup" {
 
 
 module "vpc_es_cleanup" {
-  source             = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform?ref=v0.10"
+  source             = "github.com/cloudreach/aws-lambda-es-cleanup.git//terraform?ref=v0.13"
 
   prefix             = "vpc_es_"
   es_endpoint        = "vpc-gc-demo-vpc-gloo5rzcdhyiykwdlots2hdjla.eu-central-1.es.amazonaws.com"
@@ -56,4 +58,4 @@ module "vpc_es_cleanup" {
 
 
 ### Issue
-In order order to use new module version you must have `terraform-provider-aws` greated than `1.35.0`
+In order order to use new module version you must have `terraform-provider-aws` greated than `~> 2.7` and use Terraform `~> 0.12`
