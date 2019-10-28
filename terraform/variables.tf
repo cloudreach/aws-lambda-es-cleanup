@@ -15,7 +15,8 @@ variable "sns_alert" {
   default     = ""
 }
 
-variable "es_endpoint" {}
+variable "es_endpoint" {
+}
 
 variable "index" {
   description = "Index/indices to process comma separated, with all every index will be processed except '.kibana'"
@@ -43,13 +44,13 @@ variable "python_version" {
 
 variable "subnet_ids" {
   description = "Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
 variable "security_group_ids" {
   description = "Addiational Security Ids To add."
-  type        = "list"
+  type        = list(string)
   default     = []
 }
 
@@ -59,3 +60,4 @@ variable "tags" {
     Name = "es-cleanup"
   }
 }
+
