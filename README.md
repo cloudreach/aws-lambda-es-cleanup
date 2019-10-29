@@ -125,8 +125,8 @@ Using AWS environment variable you can easily modify the behaviour of the Lambda
 | Variable Name | Example Value | Description | Default Value | Required |
 | --- | --- | --- | --- |  --- |
 | es_endpoint | search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com  | AWS ES fqdn | `None` | True |
-| index |  `logstash,cwl` | Index/indices to process comma separated, with `all` every index will be processed except the one listed in `skip_index` | `all` | False |
-| skip_index |  `.kibana,.kibana_5` | Index/indices to skip  | `.kibana` | False |
+| index |  `logstash*` | Index/indices to process comma separated, with `all` every index will be processed except the one listed in `skip_index` | `.*` | False |
+| skip_index |  `.kibana,.kibana_5` | Index/indices to skip  | `.kibana*` | False |
 | index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
 | delete_after | `7` | Numbers of days to preserve | `15` |  False |
 
