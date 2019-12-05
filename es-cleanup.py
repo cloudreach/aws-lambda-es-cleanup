@@ -237,19 +237,35 @@ def lambda_handler(event, context):
         if re.search(es.cfg["index"], index["index"]):
 
             if idx_date <= earliest_to_keep.strftime(es.cfg["index_format"]):
-                # Create snapshot if enabled
+                # Create snapshot named as the index if snapshots are enabled
                 if es.cfg["snapshot_enabled"]:
                     print("Creating snapshot for index: {} in repository {}".format(index["index"], es.cfg["snapshot_repository"]))
                     es.snapshot_index(index["index"], es.cfg["snapshot_repository"])
 
                 # Delete index
                 print("Deleting index: {}".format(index["index"]))
-                # TODO: do not delete while testing the snapshot feature
-                # es.delete_index(index["index"])
+                es.delete_index(index["index"])
             else:
                 print("Keeping index: {}".format(index["index"]))
         else:
             print("Index '{}' name '{}' did not match pattern '{}'".format(index["index"], idx_name, es.cfg["index"]))
+
+    if es.cfg["snapshot_enabled"]:
+        # Snapshot cutoff definition, remove older than this date
+        snapshot_earliest_to_keep = datetime.date.today() - datetime.timedelta(
+            days=int(es.cfg["snapshot_delete_after"]))
+        for snapshot in es.get_snapshots(es.cfg["snapshot_repository"])["snapshots"]:
+            snapshot_split = snapshot["snapshot"].rsplit("-",
+                1 + es.cfg["index_format"].count("-"))
+            snapshot_name = snapshot_split[0]
+            snapshot_date = '-'.join(word for word in snapshot_split[1:])
+
+            if snapshot_date <= snapshot_earliest_to_keep.strftime(es.cfg["index_format"]):
+                # Delete snapshot
+                print("Deleting snapshot: {}".format(snapshot["snapshot"]))
+                es.delete_snapshot(es.cfg["snapshot_repository"], snapshot["snapshot"])
+            else:
+                print("Keeping snapshot: {}".format(snapshot["snapshot"]))
 
 
 if __name__ == '__main__':
