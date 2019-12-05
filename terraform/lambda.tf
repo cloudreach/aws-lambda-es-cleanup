@@ -26,11 +26,14 @@ resource "aws_lambda_function" "es_cleanup" {
 
   environment {
     variables = {
-      es_endpoint  = var.es_endpoint
-      index        = var.index
-      skip_index   = var.skip_index
-      delete_after = var.delete_after
-      index_format = var.index_format
+      es_endpoint           = var.es_endpoint
+      index                 = var.index
+      skip_index            = var.skip_index
+      delete_after          = var.delete_after
+      index_format          = var.index_format
+      snapshot_enabled      = var.snapshot_enabled
+      snapshot_repository   = var.snapshot_repository
+      snapshot_delete_after = var.snapshot_delete_after
     }
   }
 

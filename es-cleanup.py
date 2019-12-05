@@ -58,6 +58,10 @@ class ES_Cleanup(object):
         self.cfg["index_format"] = self.get_parameter(
             "index_format", "%Y.%m.%d")
 
+        self.cfg["snapshot_enabled"] = bool(self.get_parameter("snapshot_enabled", False))
+        self.cfg["snapshot_delete_after"] = int(self.get_parameter("snapshot_delete_after", 15))
+        self.cfg["snapshot_repository"] = self.get_parameter("snapshot_repository", "es_snapshots")
+
         if not self.cfg["es_endpoint"]:
             raise Exception("[es_endpoint] OS variable is not set")
 
@@ -143,6 +147,37 @@ class ES_Cleanup(object):
         """
         return self.send_to_es(index_name, "DELETE")
 
+    def snapshot_index(self, index_name, snapshot_repository):
+        """ES PUT specific index snapshot
+
+        Args:
+            index_name (str): Index name
+
+        Returns:
+            dict: ES answer
+        """
+
+        snapshot_payload = {
+          "indices": index_name,
+          "ignore_unavailable": True,
+          "include_global_state": False
+        }
+
+        # create snapshot
+        snapshot = self.send_to_es("_snapshot/{}/{}".format(snapshot_repository, index_name), method="PUT", payload=snapshot_payload)
+
+        # Wait for snapshot to be sucessful
+        retries = 0
+        while retries < int(self.cfg["es_max_retry"]):
+            if retries > 0:
+                seconds = (5**retries) * .1
+                time.sleep(seconds)
+            snapshots = self.get_snapshot(snapshot_repository, index_name)
+            if snapshots["snapshots"][0]["state"] == "SUCCESS":
+                break
+        return snapshot
+
+
     def get_indices(self):
         """ES Get indices
 
@@ -150,6 +185,30 @@ class ES_Cleanup(object):
             dict: ES answer
         """
         return self.send_to_es("/_cat/indices")
+
+    def get_snapshots(self, snapshot_repository):
+        """ES Get snapshots of a repository
+
+        Returns:
+            dict: ES answer
+        """
+        return self.send_to_es("/_snapshot/{}/_all".format(snapshot_repository))
+
+    def get_snapshot(self, snapshot_repository, snapshot_name):
+        """ES Get snapshot
+
+        Returns:
+            dict: ES answer
+        """
+        return self.send_to_es("/_snapshot/{}/{}".format(snapshot_repository, snapshot_name))
+
+    def delete_snapshot(self, snapshot_repository, snapshot_name):
+        """ES Get snapshot
+
+        Returns:
+            dict: ES answer
+        """
+        return self.send_to_es("/_snapshot/{}/{}".format(snapshot_repository, snapshot_name), method="DELETE")
 
 
 def lambda_handler(event, context):
@@ -178,8 +237,15 @@ def lambda_handler(event, context):
         if re.search(es.cfg["index"], index["index"]):
 
             if idx_date <= earliest_to_keep.strftime(es.cfg["index_format"]):
+                # Create snapshot if enabled
+                if es.cfg["snapshot_enabled"]:
+                    print("Creating snapshot for index: {} in repository {}".format(index["index"], es.cfg["snapshot_repository"]))
+                    es.snapshot_index(index["index"], es.cfg["snapshot_repository"])
+
+                # Delete index
                 print("Deleting index: {}".format(index["index"]))
-                es.delete_index(index["index"])
+                # TODO: do not delete while testing the snapshot feature
+                # es.delete_index(index["index"])
             else:
                 print("Keeping index: {}".format(index["index"]))
         else:
@@ -199,3 +265,4 @@ if __name__ == '__main__':
         ['arn:aws:events:us-east-1:123456789012:rule/my-schedule']
     }
     lambda_handler(event, "")
+
