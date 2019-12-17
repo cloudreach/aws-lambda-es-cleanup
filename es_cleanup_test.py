@@ -32,5 +32,6 @@ class TestShouldDelete(unittest.TestCase):
         self.assertFalse(tuple[0])
         self.assertTrue("matches skip condition" in tuple[1])
 
+
 if __name__ == '__main__':
     unittest.main()
