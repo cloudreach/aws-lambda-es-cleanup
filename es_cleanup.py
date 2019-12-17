@@ -169,17 +169,17 @@ def delete_decider(delete_after, idx_format, idx_regex, skip_idx_regex, today):
             return False, "index matches skip condition"
 
         try:
-            idx_date_parsed = datetime.datetime.strptime(idx_date_str, idx_format)
+            idx_datetime = datetime.datetime.strptime(idx_date_str, idx_format)
+            idx_date = idx_datetime.date()
         except ValueError:
             raise ValueError("Unable to parse index date {0} - "
                              "incorrect index date format set?".format(idx_date_str))
 
-        if idx_date_parsed.date() < earliest_to_keep:
+        if idx_date < earliest_to_keep:
             return True, "all conditions satisfied"
 
-        return False, "Index '{0}' name '{1}' did not match pattern '{2}'".format(index["index"],
-                                                                                  idx_name,
-                                                                                  idx_regex)
+        return False, "deletion age of has not been reached. " \
+                      "Oldest index kept: {0}, Index Date: {1}".format(earliest_to_keep, idx_date)
 
     return should_delete
 
@@ -194,13 +194,14 @@ def lambda_handler(event, context):
     """
     es = ES_Cleanup(event, context)
     should_delete = delete_decider(delete_after=int(es.cfg["delete_after"]),
+                                   idx_regex=es.cfg["index"],
                                    idx_format=es.cfg["index_format"],
                                    skip_idx_regex=es.cfg["skip_index"],
                                    today=datetime.date.today())
 
     for index in es.get_indices():
         d, reason = should_delete(index)
-        if d(index):
+        if d:
             print("Deleting index: {}".format(index["index"]))
             es.delete_index(index["index"])
         else:

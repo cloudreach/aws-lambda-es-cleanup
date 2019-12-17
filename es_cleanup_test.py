@@ -28,7 +28,7 @@ class TestShouldDelete(unittest.TestCase):
             should_delete1({"index": "k8s-2019-12-15"})
 
     def test_should_skip_indes(self):
-        tuple = should_delete1({"index": "kibana-kjsdjkabsklcjukcd"})
+        tuple = should_delete1({"index": ".kibana"})
         self.assertFalse(tuple[0])
         self.assertTrue("matches skip condition" in tuple[1])
 
