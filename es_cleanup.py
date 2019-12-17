@@ -14,6 +14,7 @@ from botocore.credentials import create_credential_resolver
 from botocore.httpsession import URLLib3Session
 from botocore.session import get_session
 import sys
+
 if sys.version_info[0] == 3:
     from urllib.request import quote
 else:
@@ -34,7 +35,6 @@ class ES_Exception(Exception):
 
 
 class ES_Cleanup(object):
-
     name = "lambda_es_cleanup"
 
     def __init__(self, event, context):
@@ -95,15 +95,15 @@ class ES_Cleanup(object):
         es_region = self.cfg["es_endpoint"].split(".")[1]
 
         headers = {
-                "Host": self.cfg["es_endpoint"],
-                "Content-Type": "application/json"
-            }
+            "Host": self.cfg["es_endpoint"],
+            "Content-Type": "application/json"
+        }
 
         # send to ES with exponential backoff
         retries = 0
         while retries < int(self.cfg["es_max_retry"]):
             if retries > 0:
-                seconds = (2**retries) * .1
+                seconds = (2 ** retries) * .1
                 time.sleep(seconds)
 
             req = AWSRequest(
@@ -152,20 +152,20 @@ class ES_Cleanup(object):
         return self.send_to_es("/_cat/indices")
 
 
-def delete_decider(delete_after, idx_format, idx_regex, skip_idx_regex):
+def delete_decider(delete_after, idx_format, idx_regex, skip_idx_regex, today):
     def should_delete(index):
         idx_split = index["index"].rsplit("-", 1 + idx_format.count("-"))
         idx_date_str = '-'.join(word for word in idx_split[1:])
         idx_name = idx_split[0]
 
-        if not re.search(idx_regex, index):
+        if not re.search(idx_regex, index["index"]):
             return False, "index '{}' name '{}' did not match pattern '{}'".format(index["index"],
                                                                                    idx_name,
                                                                                    idx_regex)
 
-        earliest_to_keep = datetime.date.today() - datetime.timedelta(
+        earliest_to_keep = today - datetime.timedelta(
             days=delete_after)
-        if re.search(skip_idx_regex, index):
+        if re.search(skip_idx_regex, index["index"]):
             return False, "index matches skip condition"
 
         try:
@@ -177,7 +177,9 @@ def delete_decider(delete_after, idx_format, idx_regex, skip_idx_regex):
         if idx_date_parsed.date() < earliest_to_keep:
             return True, "all conditions satisfied"
 
-        return False, "Index '{0}' name '{}' did not match pattern '{}'".format(index["index"], idx_name, es.cfg["index"]
+        return False, "Index '{0}' name '{1}' did not match pattern '{2}'".format(index["index"],
+                                                                                  idx_name,
+                                                                                  idx_regex)
 
     return should_delete
 
@@ -193,7 +195,8 @@ def lambda_handler(event, context):
     es = ES_Cleanup(event, context)
     should_delete = delete_decider(delete_after=int(es.cfg["delete_after"]),
                                    idx_format=es.cfg["index_format"],
-                                   skip_idx_regex=es.cfg["skip_index"])
+                                   skip_idx_regex=es.cfg["skip_index"],
+                                   today=datetime.date.today())
 
     for index in es.get_indices():
         d, reason = should_delete(index)
@@ -202,6 +205,7 @@ def lambda_handler(event, context):
             es.delete_index(index["index"])
         else:
             print("Skipping or keeping index: {}. Reason: {}".format(index["index"], reason))
+
 
 if __name__ == '__main__':
     event = {
@@ -213,6 +217,6 @@ if __name__ == '__main__':
         'time': '1970-01-01T00:00:00Z',
         'id': 'cdc73f9d-aea9-11e3-9d5a-835b769c0d9c',
         'resources':
-        ['arn:aws:events:us-east-1:123456789012:rule/my-schedule']
+            ['arn:aws:events:us-east-1:123456789012:rule/my-schedule']
     }
     lambda_handler(event, "")
