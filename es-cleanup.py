@@ -164,7 +164,7 @@ class ES_Cleanup(object):
         }
 
         # Append a timestamp to deduplicate multiple snapshots for same index
-        now = str(datetime.datetime.now())
+        now = str(datetime.datetime.now().timestamp())
         snapshot_name = "{}_{}".format(index_name, now)
 
         # create snapshot
