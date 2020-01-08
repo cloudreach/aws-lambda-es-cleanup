@@ -10,6 +10,10 @@ variable "schedule" {
   default = "cron(0 3 * * ? *)"
 }
 
+variable "timeout" {
+  default = 300
+}
+
 variable "es_endpoint" {
 }
 
