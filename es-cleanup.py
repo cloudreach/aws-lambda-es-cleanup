@@ -163,8 +163,12 @@ class ES_Cleanup(object):
           "include_global_state": False
         }
 
+        # Append a timestamp to deduplicate multiple snapshots for same index
+        now = str(datetime.datetime.now())
+        snapshot_name = "{}_{}".format(index_name, now)
+
         # create snapshot
-        snapshot = self.send_to_es("_snapshot/{}/{}".format(snapshot_repository, index_name), method="PUT", payload=snapshot_payload)
+        snapshot = self.send_to_es("_snapshot/{}/{}".format(snapshot_repository, snapshot_name), method="PUT", payload=snapshot_payload)
 
         # Wait for snapshot to be sucessful
         retries = 0
@@ -172,7 +176,7 @@ class ES_Cleanup(object):
             if retries > 0:
                 seconds = (5**retries) * .1
                 time.sleep(seconds)
-            snapshots = self.get_snapshot(snapshot_repository, index_name)
+            snapshots = self.get_snapshot(snapshot_repository, snapshot_name)
             if snapshots["snapshots"][0]["state"] == "SUCCESS":
                 break
         return snapshot
@@ -255,7 +259,10 @@ def lambda_handler(event, context):
         snapshot_earliest_to_keep = datetime.date.today() - datetime.timedelta(
             days=int(es.cfg["snapshot_delete_after"]))
         for snapshot in es.get_snapshots(es.cfg["snapshot_repository"])["snapshots"]:
-            snapshot_split = snapshot["snapshot"].rsplit("-",
+            # split by "-", ignoring the timestamp part of the snapshot name:
+            timestamp_pos=snapshot["snapshot"].rfind("_")
+            timestamp_pos=timestamp_pos+1 if timestamp_pos >= 0 else len(snapshot["snapshot"])
+            snapshot_split = snapshot["snapshot"][:timestamp_pos].rsplit("-",
                 1 + es.cfg["index_format"].count("-"))
             snapshot_name = snapshot_split[0]
             snapshot_date = '-'.join(word for word in snapshot_split[1:])
