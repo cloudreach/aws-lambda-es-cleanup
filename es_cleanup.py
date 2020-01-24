@@ -3,17 +3,18 @@
 """
 This AWS Lambda function allowed to delete the old Elasticsearch index
 """
-import re
-import os
-import json
-import time
 import datetime
+import re
+import sys
+import time
+
+import json
+import os
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
 from botocore.httpsession import URLLib3Session
 from botocore.session import get_session
-import sys
 
 if sys.version_info[0] == 3:
     from urllib.request import quote
@@ -198,10 +199,10 @@ def lambda_handler(event, context):
     """
     es = ES_Cleanup(event, context)
     decider = DeleteDecider(delete_after=int(es.cfg["delete_after"]),
-                                   idx_regex=es.cfg["index"],
-                                   idx_format=es.cfg["index_format"],
-                                   skip_idx_regex=es.cfg["skip_index"],
-                                   today=datetime.date.today())
+                            idx_regex=es.cfg["index"],
+                            idx_format=es.cfg["index_format"],
+                            skip_idx_regex=es.cfg["skip_index"],
+                            today=datetime.date.today())
 
     for index in es.get_indices():
         d, reason = decider.should_delete(index)
