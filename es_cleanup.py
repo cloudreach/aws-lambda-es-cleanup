@@ -152,24 +152,30 @@ class ES_Cleanup(object):
         return self.send_to_es("/_cat/indices")
 
 
-def delete_decider(delete_after, idx_format, idx_regex, skip_idx_regex, today):
-    def should_delete(index):
-        idx_split = index["index"].rsplit("-", 1 + idx_format.count("-"))
+class DeleteDecider(object):
+    def __init__(self, delete_after, idx_format, idx_regex, skip_idx_regex, today):
+        self.delete_after = delete_after
+        self.idx_format = idx_format
+        self.idx_regex = idx_regex
+        self.skip_idx_regex = skip_idx_regex
+        self.today = today
+
+    def should_delete(self, index):
+        idx_split = index["index"].rsplit("-", 1 + self.idx_format.count("-"))
         idx_date_str = '-'.join(word for word in idx_split[1:])
         idx_name = idx_split[0]
 
-        if not re.search(idx_regex, index["index"]):
+        if not re.search(self.idx_regex, index["index"]):
             return False, "index '{}' name '{}' did not match pattern '{}'".format(index["index"],
                                                                                    idx_name,
-                                                                                   idx_regex)
+                                                                                   self.idx_regex)
 
-        earliest_to_keep = today - datetime.timedelta(
-            days=delete_after)
-        if re.search(skip_idx_regex, index["index"]):
+        earliest_to_keep = self.today - datetime.timedelta(days=self.delete_after)
+        if re.search(self.skip_idx_regex, index["index"]):
             return False, "index matches skip condition"
 
         try:
-            idx_datetime = datetime.datetime.strptime(idx_date_str, idx_format)
+            idx_datetime = datetime.datetime.strptime(idx_date_str, self.idx_format)
             idx_date = idx_datetime.date()
         except ValueError:
             raise ValueError("Unable to parse index date {0} - "
@@ -180,8 +186,6 @@ def delete_decider(delete_after, idx_format, idx_regex, skip_idx_regex, today):
 
         return False, "deletion age of has not been reached. " \
                       "Oldest index kept: {0}, Index Date: {1}".format(earliest_to_keep, idx_date)
-
-    return should_delete
 
 
 def lambda_handler(event, context):
