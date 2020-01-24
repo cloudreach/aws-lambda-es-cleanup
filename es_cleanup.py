@@ -197,14 +197,14 @@ def lambda_handler(event, context):
         None
     """
     es = ES_Cleanup(event, context)
-    should_delete = delete_decider(delete_after=int(es.cfg["delete_after"]),
+    decider = DeleteDecider(delete_after=int(es.cfg["delete_after"]),
                                    idx_regex=es.cfg["index"],
                                    idx_format=es.cfg["index_format"],
                                    skip_idx_regex=es.cfg["skip_index"],
                                    today=datetime.date.today())
 
     for index in es.get_indices():
-        d, reason = should_delete(index)
+        d, reason = decider.should_delete(index)
         if d:
             print("Deleting index: {}".format(index["index"]))
             es.delete_index(index["index"])
