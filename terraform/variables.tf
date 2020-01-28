@@ -28,6 +28,21 @@ variable "delete_after" {
   default     = 15
 }
 
+variable "snapshot_enabled" {
+  type    = bool
+  default = false
+}
+
+variable "snapshot_repository" {
+  type    = string
+  default = ""
+}
+
+variable "snapshot_delete_after" {
+  description = "Numbers of days to preserve snapshots"
+  default     = 15
+}
+
 variable "index_format" {
   description = "Combined with 'index' varible is used to evaluate the index age"
   default     = "%Y.%m.%d"
