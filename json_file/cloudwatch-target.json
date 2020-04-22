@@ -1,6 +1,6 @@
 [
   {
-    "Id": "1", 
+    "Id": "1",
     "Arn": "arn:aws:lambda:eu-west-1:123456789012:function:es-cleanup-lambda"
   }
 ]

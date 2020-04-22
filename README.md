@@ -110,7 +110,7 @@ $ aws lambda add-permission \
 	--statement-id my-scheduled-event \
 	--action 'lambda:InvokeFunction' \
 	--principal events.amazonaws.com \
-	--source-arn arn:aws:events:eu-west-1:123456789012:rule/my-scheduled-rule    
+	--source-arn arn:aws:events:eu-west-1:123456789012:rule/my-scheduled-rule
 
 
 $ aws events put-targets \

@@ -48,4 +48,3 @@ resource "aws_lambda_function" "es_cleanup" {
     security_group_ids = compact(concat(local.sg_ids, var.security_group_ids))
   }
 }
-
