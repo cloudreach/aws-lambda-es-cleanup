@@ -3,26 +3,58 @@
 This module is available as [Registry](https://registry.terraform.io/modules/giuliocalzolari/es-cleanup/)
 Terraform modules will be moved in a dedicated [Github Repo](https://github.com/giuliocalzolari/terraform-aws-es-cleanup) to make it easier
 
-## For backwards compatibility this terraform code will be maintained 
+## For backwards compatibility this terraform code will be maintained
 Please Use [Terraform Registry](https://registry.terraform.io/modules/giuliocalzolari/es-cleanup/)
 
 ## Module Input Variables
 
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Providers
 
-| Variable Name | Example Value | Description | Default Value | Required |
-| --- | --- | --- | --- |  --- |
-| es_endpoint | `search-es-demo-zveqnhnhjqm5flntemgmx5iuya.eu-west-1.es.amazonaws.com`  | AWS ES fqdn | `None` | True |
-| index |  `logstash-*` | Index/indices to process comma separated, with `all` every index will be processed except `skip_index` | `.*` | False |
-| skip_index |  `.kibana*` | Index/indices to skip  | `.kibana*` | False |
-| index_format  | `%Y.%m.%d` | Combined with `index` varible is used to evaluate the index age | `%Y.%m.%d` |  False |
-| delete_after | `7` | Numbers of days to preserve | `15` |  False |
-| python_version | `3.6` | Python version to be used | `3.6` |  False |
-| schedule | `cron(0 3 * * ? *)` | Cron Schedule expression for running the cleanup function | `cron(0 3 * * ? *)` |  False |
-| timeout | `300` | Maximum lambda execution time | `300` |  False |
-| prefix | `public-` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
-| suffix | `-public` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
-| subnet_ids | `["subnet-1111111", "subnet-222222"]` | Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC. | | False |
-| security_group_ids | `["sg-1111111", "sg-222222"]` | Addiational Security Ids to add. | | False |
+| Name | Version |
+|------|---------|
+| archive | n/a |
+| aws | n/a |
+| null | n/a |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:-----:|
+| delete\_after | Numbers of days to preserve | `number` | `15` | no |
+| es\_endpoint | AWS ES FQDN e.g. search-es-demo-xxxxxxxxxx.eu-west-1.es.amazonaws.com | `string` | n/a | yes |
+| index | Index/indices to process using regex, the one matching `skip_index` | `string` | `".*"` | no |
+| index\_format | Combined with 'index' varible is used to evaluate the index age | `string` | `"%Y.%m.%d"` | no |
+| prefix | A prefix for the resource names, this helps create multiple instances of this stack for different environments | `string` | `""` | no |
+| python\_version | Lambda Python version to be used | `string` | `"3.6"` | no |
+| schedule | Cloudwatch Cron Schedule expression for running the cleanup function | `string` | `"cron(0 3 * * ? *)"` | no |
+| security\_group\_ids | Addiational Security Ids To add. | `list(string)` | `[]` | no |
+| skip\_index | Index/indices to skip | `string` | `".kibana*"` | no |
+| subnet\_ids | Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC. | `list(string)` | `[]` | no |
+| suffix | A suffix for the resource names, this helps create multiple instances of this stack for different environments | `string` | `""` | no |
+| tags | Tags to apply | `map` | <pre>{<br>  "Name": "es-cleanup"<br>}</pre> | no |
+| timeout | Maximum lambda execution time | `number` | `300` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| cloudwatch\_event\_arn | AWS Cloudwatch Event ARN |
+| iam\_role\_arn | AWS IAM ARN |
+| lambda\_arn | AWS Lambda ARN |
+
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
+
+## pre-commit hook
+
+this repo is using pre-commit hook to know more [click here](https://github.com/antonbabenko/pre-commit-terraform)
+to manually trigger use this command
+
+```
+pre-commit install
+pre-commit run --all-files
+```
 
 
 ## Example

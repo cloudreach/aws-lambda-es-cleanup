@@ -48,4 +48,4 @@ functions:
       - schedule: cron(0 1 * * ? *)
 
 resources:
-  Description: "AWS Lambda: Elasticsearch Index Cleanup"      
+  Description: "AWS Lambda: Elasticsearch Index Cleanup"
