@@ -3,17 +3,19 @@
 """
 This AWS Lambda function allowed to delete the old Elasticsearch index
 """
-import re
-import os
-import json
-import time
 import datetime
+import re
+import sys
+import time
+
+import json
+import os
 from botocore.auth import SigV4Auth
 from botocore.awsrequest import AWSRequest
 from botocore.credentials import create_credential_resolver
 from botocore.httpsession import URLLib3Session
 from botocore.session import get_session
-import sys
+
 if sys.version_info[0] == 3:
     from urllib.request import quote
 else:
@@ -34,7 +36,6 @@ class ES_Exception(Exception):
 
 
 class ES_Cleanup(object):
-
     name = "lambda_es_cleanup"
 
     def __init__(self, event, context):
@@ -95,15 +96,15 @@ class ES_Cleanup(object):
         es_region = self.cfg["es_endpoint"].split(".")[1]
 
         headers = {
-                "Host": self.cfg["es_endpoint"],
-                "Content-Type": "application/json"
-            }
+            "Host": self.cfg["es_endpoint"],
+            "Content-Type": "application/json"
+        }
 
         # send to ES with exponential backoff
         retries = 0
         while retries < int(self.cfg["es_max_retry"]):
             if retries > 0:
-                seconds = (2**retries) * .1
+                seconds = (2 ** retries) * .1
                 time.sleep(seconds)
 
             req = AWSRequest(
@@ -152,6 +153,42 @@ class ES_Cleanup(object):
         return self.send_to_es("/_cat/indices")
 
 
+class DeleteDecider(object):
+    def __init__(self, delete_after, idx_format, idx_regex, skip_idx_regex, today):
+        self.delete_after = delete_after
+        self.idx_format = idx_format
+        self.idx_regex = idx_regex
+        self.skip_idx_regex = skip_idx_regex
+        self.today = today
+
+    def should_delete(self, index):
+        idx_split = index["index"].rsplit("-", 1 + self.idx_format.count("-"))
+        idx_date_str = '-'.join(word for word in idx_split[1:])
+        idx_name = idx_split[0]
+
+        if not re.search(self.idx_regex, index["index"]):
+            return False, "index '{}' name '{}' did not match pattern '{}'".format(index["index"],
+                                                                                   idx_name,
+                                                                                   self.idx_regex)
+
+        earliest_to_keep = self.today - datetime.timedelta(days=self.delete_after)
+        if re.search(self.skip_idx_regex, index["index"]):
+            return False, "index matches skip condition"
+
+        try:
+            idx_datetime = datetime.datetime.strptime(idx_date_str, self.idx_format)
+            idx_date = idx_datetime.date()
+        except ValueError:
+            raise ValueError("Unable to parse index date {0} - "
+                             "incorrect index date format set?".format(idx_date_str))
+
+        if idx_date < earliest_to_keep:
+            return True, "all conditions satisfied"
+
+        return False, "deletion age of has not been reached. " \
+                      "Oldest index kept: {0}, Index Date: {1}".format(earliest_to_keep, idx_date)
+
+
 def lambda_handler(event, context):
     """Main Lambda function
     Args:
@@ -161,29 +198,19 @@ def lambda_handler(event, context):
         None
     """
     es = ES_Cleanup(event, context)
-    # Index cutoff definition, remove older than this date
-    earliest_to_keep = datetime.date.today() - datetime.timedelta(
-        days=int(es.cfg["delete_after"]))
+    decider = DeleteDecider(delete_after=int(es.cfg["delete_after"]),
+                            idx_regex=es.cfg["index"],
+                            idx_format=es.cfg["index_format"],
+                            skip_idx_regex=es.cfg["skip_index"],
+                            today=datetime.date.today())
+
     for index in es.get_indices():
-        print("Found index: {}".format(index["index"]))
-        if re.search(es.cfg["skip_index"], index["index"]):
-            # ignore .kibana index
-            continue
-
-        idx_split = index["index"].rsplit("-",
-            1 + es.cfg["index_format"].count("-"))
-        idx_name = idx_split[0]
-        idx_date = '-'.join(word for word in idx_split[1:])
-
-        if re.search(es.cfg["index"], index["index"]):
-
-            if idx_date <= earliest_to_keep.strftime(es.cfg["index_format"]):
-                print("Deleting index: {}".format(index["index"]))
-                es.delete_index(index["index"])
-            else:
-                print("Keeping index: {}".format(index["index"]))
+        d, reason = decider.should_delete(index)
+        if d:
+            print("Deleting index: {}".format(index["index"]))
+            es.delete_index(index["index"])
         else:
-            print("Index '{}' name '{}' did not match pattern '{}'".format(index["index"], idx_name, es.cfg["index"]))
+            print("Skipping or keeping index: {}. Reason: {}".format(index["index"], reason))
 
 
 if __name__ == '__main__':
@@ -196,6 +223,6 @@ if __name__ == '__main__':
         'time': '1970-01-01T00:00:00Z',
         'id': 'cdc73f9d-aea9-11e3-9d5a-835b769c0d9c',
         'resources':
-        ['arn:aws:events:us-east-1:123456789012:rule/my-schedule']
+            ['arn:aws:events:us-east-1:123456789012:rule/my-schedule']
     }
     lambda_handler(event, "")

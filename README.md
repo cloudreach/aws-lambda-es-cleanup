@@ -50,7 +50,7 @@ arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
 Create your Lambda package
 
 ```bash
-$ zip es-cleanup-lambda.zip es-cleanup.py
+$ zip es-cleanup-lambda.zip es_cleanup.py
 ```
 
 

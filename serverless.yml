@@ -39,7 +39,7 @@ functions:
       exclude:
         - ./**
       include:
-        - es-cleanup.py
+        - es_cleanup.py
         - LICENSE.md
         - README.md
         - CONTRIBUTING.md
