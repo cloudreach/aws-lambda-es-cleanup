@@ -28,7 +28,7 @@ variable "es_endpoint" {
 }
 
 variable "index" {
-  description = "Index/indices to process using regex, the one matching `skip_index`"
+  description = "Index/indices to process using regex, except the one matching `skip_index` regex"
   default     = ".*"
   type        = string
 }

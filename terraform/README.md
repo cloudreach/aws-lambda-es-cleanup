@@ -15,7 +15,7 @@
 |------|-------------|------|---------|:-----:|
 | delete\_after | Numbers of days to preserve | `number` | `15` | no |
 | es\_endpoint | AWS ES FQDN e.g. search-es-demo-xxxxxxxxxx.eu-west-1.es.amazonaws.com | `string` | n/a | yes |
-| index | Index/indices to process using regex, the one matching `skip_index` | `string` | `".*"` | no |
+| index | Index/indices to process using regex, except the one matching `skip_index` regex | `string` | `".*"` | no |
 | index\_format | Combined with 'index' varible is used to evaluate the index age | `string` | `"%Y.%m.%d"` | no |
 | prefix | A prefix for the resource names, this helps create multiple instances of this stack for different environments | `string` | `""` | no |
 | python\_version | Lambda Python version to be used | `string` | `"3.6"` | no |
