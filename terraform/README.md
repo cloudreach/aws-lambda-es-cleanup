@@ -1,12 +1,4 @@
-# Terraform Registry
-
-This module is available as [Registry](https://registry.terraform.io/modules/giuliocalzolari/es-cleanup/)
-Terraform modules will be moved in a dedicated [Github Repo](https://github.com/giuliocalzolari/terraform-aws-es-cleanup) to make it easier
-
-## For backwards compatibility this terraform code will be maintained
-Please Use [Terraform Registry](https://registry.terraform.io/modules/giuliocalzolari/es-cleanup/)
-
-## Module Input Variables
+# Module Input Variables
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Providers
