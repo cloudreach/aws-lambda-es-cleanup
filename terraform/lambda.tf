@@ -1,7 +1,7 @@
 data "archive_file" "es_cleanup_lambda" {
   type        = "zip"
   source_file = "${path.module}/../es_cleanup.py"
-  output_path = "${path.module}/es-cleanup.zip"
+  output_path = "${path.module}/es_cleanup.zip"
 }
 
 locals {
@@ -10,7 +10,7 @@ locals {
 
 data "null_data_source" "lambda_file" {
   inputs = {
-    filename = "${path.module}/es-cleanup.zip"
+    filename = "${path.module}/es_cleanup.zip"
   }
 }
 
@@ -21,7 +21,7 @@ resource "aws_lambda_function" "es_cleanup" {
   timeout          = 300
   runtime          = "python${var.python_version}"
   role             = aws_iam_role.role.arn
-  handler          = "es-cleanup.lambda_handler"
+  handler          = "es_cleanup.lambda_handler"
   source_code_hash = data.archive_file.es_cleanup_lambda.output_base64sha256
 
   environment {
