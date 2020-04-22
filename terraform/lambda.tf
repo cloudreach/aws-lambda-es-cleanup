@@ -18,7 +18,7 @@ resource "aws_lambda_function" "es_cleanup" {
   filename         = data.null_data_source.lambda_file.outputs.filename
   function_name    = "${var.prefix}es-cleanup${var.suffix}"
   description      = "${var.prefix}es-cleanup${var.suffix}"
-  timeout          = 300
+  timeout          = var.timeout
   runtime          = "python${var.python_version}"
   role             = aws_iam_role.role.arn
   handler          = "es_cleanup.lambda_handler"

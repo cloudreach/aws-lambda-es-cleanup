@@ -18,6 +18,7 @@ Please Use [Terraform Registry](https://registry.terraform.io/modules/giuliocalz
 | delete_after | `7` | Numbers of days to preserve | `15` |  False |
 | python_version | `3.6` | Python version to be used | `3.6` |  False |
 | schedule | `cron(0 3 * * ? *)` | Cron Schedule expression for running the cleanup function | `cron(0 3 * * ? *)` |  False |
+| timeout | `300` | Maximum lambda execution time | `300` |  False |
 | prefix | `public-` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
 | suffix | `-public` | A prefix for the resource names, this helps create multiple instances of this stack for different environments | | False |
 | subnet_ids | `["subnet-1111111", "subnet-222222"]` | Subnet IDs you want to deploy the lambda in. Only fill this in if you want to deploy your Lambda function inside a VPC. | | False |
