@@ -8,6 +8,7 @@ __pycache__/
 
 **/.terraform
 **/terraform.tfstate*
+**/.terraform.tfstate*
 
 **/*es-cleanup.zip
 **/*es_cleanup.zip

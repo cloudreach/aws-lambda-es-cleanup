@@ -17,4 +17,10 @@ Just run
 
 ## Notes
 
-This demo script will save the terraform state in you local folder
+This demo script will save the terraform state in you local folder.
+
+Remember to destroy your test scenario using the command:
+
+```
+terraform destroy -auto-approve
+```
