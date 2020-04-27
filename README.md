@@ -66,7 +66,7 @@ $ aws lambda create-function \
 	--function-name es-cleanup-lambda \
 	--environment Variables={es_endpoint=$ESENDPOINT} \
 	--zip-file fileb://es-cleanup-lambda.zip \
-	--description "Elastichsearch Index Cleanup" \
+	--description "Elasticsearch Index Cleanup" \
 	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
 	--handler es-cleanup.lambda_handler \
 	--runtime python3.6 \
@@ -80,7 +80,7 @@ $ export AWS_DEFAULT_REGION=eu-west-1
 $ aws lambda create-function \
 	--function-name es-cleanup-lambda \
 	--zip-file fileb://es-cleanup-lambda.zip \
-	--description "Elastichsearch Index Cleanup" \
+	--description "Elasticsearch Index Cleanup" \
 	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
 	--handler es-cleanup.lambda_handler \
 	--runtime python3.6 \
