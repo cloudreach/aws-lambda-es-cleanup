@@ -68,7 +68,7 @@ $ aws lambda create-function \
 	--zip-file fileb://es-cleanup-lambda.zip \
 	--description "Elasticsearch Index Cleanup" \
 	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
-	--handler es-cleanup.lambda_handler \
+	--handler es_cleanup.lambda_handler \
 	--runtime python3.6 \
 	--timeout 180
 ```
@@ -82,7 +82,7 @@ $ aws lambda create-function \
 	--zip-file fileb://es-cleanup-lambda.zip \
 	--description "Elasticsearch Index Cleanup" \
 	--role arn:aws:iam::123456789012:role/es-cleanup-lambda \
-	--handler es-cleanup.lambda_handler \
+	--handler es_cleanup.lambda_handler \
 	--runtime python3.6 \
 	--timeout 180
 ```
