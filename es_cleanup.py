@@ -53,6 +53,7 @@ class ES_Cleanup(object):
         self.cfg["es_endpoint"] = self.get_parameter("es_endpoint")
         self.cfg["index"] = self.get_parameter("index", ".*")
         self.cfg["skip_index"] = self.get_parameter("skip_index", ".kibana*")
+        self.cfg["skip_security_index"] = self.get_parameter("skip_security_index", ".opendistro_security*")
 
         self.cfg["delete_after"] = int(self.get_parameter("delete_after", 15))
         self.cfg["es_max_retry"] = int(self.get_parameter("es_max_retry", 3))
@@ -154,11 +155,12 @@ class ES_Cleanup(object):
 
 
 class DeleteDecider(object):
-    def __init__(self, delete_after, idx_format, idx_regex, skip_idx_regex, today):
+    def __init__(self, delete_after, idx_format, idx_regex, skip_idx_regex, skip_security_idx_regex, today):
         self.delete_after = delete_after
         self.idx_format = idx_format
         self.idx_regex = idx_regex
         self.skip_idx_regex = skip_idx_regex
+        self.skip_security_idx_regex = skip_security_idx_regex
         self.today = today
 
     def should_delete(self, index):
@@ -172,7 +174,7 @@ class DeleteDecider(object):
                                                                                    self.idx_regex)
 
         earliest_to_keep = self.today - datetime.timedelta(days=self.delete_after)
-        if re.search(self.skip_idx_regex, index["index"]):
+        if re.search(self.skip_idx_regex, index["index"]) or re.search(self.skip_security_idx_regex, index["index"]):
             return False, "index matches skip condition"
 
         try:
@@ -202,6 +204,7 @@ def lambda_handler(event, context):
                             idx_regex=es.cfg["index"],
                             idx_format=es.cfg["index_format"],
                             skip_idx_regex=es.cfg["skip_index"],
+                            skip_security_idx_regex=es.cfg["skip_security_index"],
                             today=datetime.date.today())
 
     for index in es.get_indices():
