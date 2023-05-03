@@ -5,17 +5,12 @@ data "archive_file" "es_cleanup_lambda" {
 }
 
 locals {
-  sg_ids = [element(concat(aws_security_group.lambda.*.id, [""]), 0)]
-}
-
-data "null_data_source" "lambda_file" {
-  inputs = {
-    filename = "${path.module}/es_cleanup.zip"
-  }
+  sg_ids          = [element(concat(aws_security_group.lambda.*.id, [""]), 0)]
+  lambda_filename = "${path.module}/es_cleanup.zip"
 }
 
 resource "aws_lambda_function" "es_cleanup" {
-  filename         = data.null_data_source.lambda_file.outputs.filename
+  filename         = local.lambda_filename
   function_name    = "${var.prefix}es-cleanup${var.suffix}"
   description      = "${var.prefix}es-cleanup${var.suffix}"
   timeout          = var.timeout
